@@ -1,6 +1,7 @@
 const express = require("express");
 const Database = require("better-sqlite3");
 const path = require("path");
+const fs = require("fs");
 
 const app = express();
 const PORT = 3000;
@@ -8,8 +9,12 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
+// Ensure data directory exists
+const DATA_DIR = "/app/data";
+if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+
 // Init SQLite
-const db = new Database("/data/todos.db");
+const db = new Database(path.join(DATA_DIR, "todos.db"));
 db.exec(`
   CREATE TABLE IF NOT EXISTS todos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
